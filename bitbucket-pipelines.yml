@@ -25,6 +25,7 @@ pipelines:
   branches:
     staging:
       - stage:
+        name: "Deploy to staging"
         deployment: Staging
         steps:
           - step:
