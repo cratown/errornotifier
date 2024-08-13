@@ -27,10 +27,13 @@ pipelines:
       - step:
           <<: *test
           name: Test beta version
-      - step:
-          <<: *push
-          name: Test beta build and push image
-          deployment: Staging
+      - stage:
+        name: Deploy to staging
+        deployment: Staging
+        steps:
+          - step:
+              <<: *push
+              name: Test beta build and push image
   tags:
     '*-beta*':
       - step:
