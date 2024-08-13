@@ -13,10 +13,10 @@ pipelines:
       - step:
           <<: *test
           name: Test beta version
-          deployment: beta
+          deployment: Staging
   tags:
     '*-beta*':
       - step:
           <<: *test
           name: Test beta version
-          deployment: beta
+          deployment: Staging
