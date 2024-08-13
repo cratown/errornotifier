@@ -24,16 +24,13 @@ definitions:
 pipelines:
   branches:
     staging:
-      - stage:
-        name: "Deploy to staging"
-        deployment: Staging
-        steps:
-          - step:
-              <<: *test
-              name: Test beta version
-          - step:
-              <<: *push
-              name: Test beta build and push image
+      - step:
+          <<: *test
+          name: Test beta version
+      - step:
+          <<: *push
+          name: Test beta build and push image
+          deployment: Staging
   tags:
     '*-beta*':
       - step:
