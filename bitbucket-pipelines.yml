@@ -1,11 +1,12 @@
 image: maven:3.9.8-jdk-21
 definitions:
-  - step: &test
-      name: Testing ...
-      caches:
-          - maven
-      script: # Modify the commands below to build your repository.
-        - mvn -B verify # -B batch mode makes Maven less verbose
+  steps:
+    - step: &test
+        name: Testing ...
+        caches:
+            - maven
+        script: # Modify the commands below to build your repository.
+          - mvn -B verify --file pom.xml # -B batch mode makes Maven less verbose
 pipelines:
   branches:
     staging:
