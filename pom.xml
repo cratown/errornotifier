@@ -105,6 +105,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>errornotifier</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

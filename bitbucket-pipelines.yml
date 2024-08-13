@@ -7,12 +7,30 @@ definitions:
             - maven
         script: # Modify the commands below to build your repository.
           - mvn -B verify --file pom.xml # -B batch mode makes Maven less verbose
+        artifacts:
+          - target/*.jar
+    - step: &push
+        name: Build and push image
+        services:
+          - docker
+        caches:
+          - maven
+        script:
+          - ls -ltra ./target
+          - docker build -f Dockerfile -t $DOCKER_IMAGE_NAME:latest .
+          - docker tag $DOCKER_IMAGE_NAME:latest $DOCKER_REGISTRY_HOST/$DOCKER_IMAGE_NAME:latest
+          - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY_HOST
+          - docker push $DOCKER_REGISTRY_HOST/$DOCKER_IMAGE_NAME:latest
 pipelines:
   branches:
     staging:
       - step:
           <<: *test
           name: Test beta version
+          deployment: Staging
+      - step:
+          <<: *push
+          name: Test beta build and push image
           deployment: Staging
   tags:
     '*-beta*':
