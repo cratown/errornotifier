@@ -30,7 +30,6 @@ pipelines:
           - step:
               <<: *test
               name: Test beta version
-              
           - step:
               <<: *push
               name: Test beta build and push image
