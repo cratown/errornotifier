@@ -34,19 +34,3 @@ pipelines:
           deployment: Staging
           steps:
             - step: *push
-  branches:
-    staging:
-      - step:
-        <<: *test
-        name: Test beta version
-      - stage:
-        name: Deploy to staging
-        deployment: Staging
-        steps:
-          - step: *push
-  tags:
-    '*-beta*':
-      - step:
-        <<: *test
-        name: Test beta version
-        deployment: Staging
