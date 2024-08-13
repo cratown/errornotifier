@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/layout}">
+<head>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="mt-4">
+            <h3>Project: <span th:text="${projectError.projectName}"></span></h3>
+            <div>
+                <label>Body:</label>
+                <small th:text="${#temporals.format(projectError.createdAt, 'yyyy-mm-dd HH:mm:ss')}"></small>
+            </div>
+            <div class="highlight">
+                <pre th:text="${projectError.body}"></pre>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

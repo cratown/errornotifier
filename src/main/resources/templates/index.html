@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/layout}">
+<head>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h3 class="text-center">Errors List</h3>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Project</th>
+                    <th>Created at</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="projectError:${projectErrors}">
+                    <td th:text="${projectError.id}"></td>
+                    <td th:text="${projectError.projectName}"></td>
+                    <td th:text="${#temporals.format(projectError.createdAt, 'yyyy-mm-dd HH:mm:ss')}"></td>
+                    <td class="text-right">
+                        <a th:href="'/errors/' + ${projectError.id}">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                        <a th:href="'/errors/' + ${projectError.id} + '/delete'">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

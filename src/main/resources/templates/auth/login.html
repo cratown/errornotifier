@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/unauthorized}">
+<head>
+    <title>Login page</title>
+
+    <style>
+        .form-signin {
+            max-width: 330px;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content" class="d-flex" style="min-height: 100vh;">
+        <main class="form-signin w-100 m-auto">
+            <h1>Login page</h1>
+            <p th:if="${loginError}" class="error">Wrong user or password</p>
+            <form th:action="@{/login}" method="post">
+                <label for="username">Username</label>:
+                <input type="text"  class="form-control"  id="username" name="username" autofocus="autofocus" /> <br />
+                <label for="password">Password</label>:
+                <input type="password" class="form-control" id="password" name="password" /> <br />
+                <input type="submit" class="btn w-100 btn-primary py-2" value="Log in" />
+            </form>
+        </main>
+    </body>
+</html>
