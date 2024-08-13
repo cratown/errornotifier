@@ -22,15 +22,18 @@ definitions:
           - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY_HOST
           - docker push $DOCKER_REGISTRY_HOST/$DOCKER_IMAGE_NAME:latest
 pipelines:
-  default:
-    - stage:
-      name: Build and test
-      steps:
-        - step:
+  branches:
+    staging:
+      - step:
           <<: *test
           name: Test beta version
-        - stage:
-          name: Deploy to staging
+      - step:
+          <<: *push
+          name: Test beta build and push image
           deployment: Staging
-          steps:
-            - step: *push
+  tags:
+    '*-beta*':
+      - step:
+          <<: *test
+          name: Test beta version
+          deployment: Staging
