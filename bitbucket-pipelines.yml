@@ -17,7 +17,7 @@ definitions:
           - maven
         script:
           - ls -ltra ./target
-          - docker build --platform linux/arm64 -f Dockerfile -t $DOCKER_IMAGE_NAME:latest .
+          - docker buildx build --platform linux/arm64 -f Dockerfile -t $DOCKER_IMAGE_NAME:latest .
           - docker tag $DOCKER_IMAGE_NAME:latest $DOCKER_REGISTRY_HOST/$DOCKER_IMAGE_NAME:latest
           - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY_HOST
           - docker push $DOCKER_REGISTRY_HOST/$DOCKER_IMAGE_NAME:latest
@@ -29,7 +29,7 @@ definitions:
               SSH_USER: '$SSH_USER'
               SERVER: '$SSH_SERVER'
               MODE: 'command'
-              COMMAND: 'docker-compose pull app && docker-compose restart app'
+              COMMAND: 'docker-compose pull app && docker-compose build --no-cache app && docker-compose restart app'
               ENV_VARS: >-
                 JAVA_DOCKER_TAG=latest
 pipelines:
