@@ -25,13 +25,13 @@ definitions:
       name: Deploy on server
       script:
         - pipe: atlassian/ssh-run:0.2.2
-            variables:
-              SSH_USER: '$SSH_USER'
-              SERVER: '$SSH_SERVER'
-              MODE: 'command'
-              COMMAND: 'docker-compose pull app && docker-compose restart app'
-              ENV_VARS: >-
-                JAVA_DOCKER_TAG=latest
+          variables:
+            SSH_USER: '$SSH_USER'
+            SERVER: '$SSH_SERVER'
+            MODE: 'command'
+            COMMAND: 'docker-compose pull app && docker-compose restart app'
+            ENV_VARS: >-
+              JAVA_DOCKER_TAG=latest
 pipelines:
   branches:
     staging:
