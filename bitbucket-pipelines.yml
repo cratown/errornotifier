@@ -21,6 +21,17 @@ definitions:
           - docker tag $DOCKER_IMAGE_NAME:latest $DOCKER_REGISTRY_HOST/$DOCKER_IMAGE_NAME:latest
           - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY_HOST
           - docker push $DOCKER_REGISTRY_HOST/$DOCKER_IMAGE_NAME:latest
+    - step: &deploy
+      name: Deploy on server
+      script:
+        - pipe: atlassian/ssh-run:0.2.2
+            variables:
+              SSH_USER: '$SSH_USER'
+              SERVER: '$SSH_SERVER'
+              MODE: 'command'
+              COMMAND: 'docker-compose pull app && docker-compose restart app'
+              ENV_VARS: >-
+                JAVA_DOCKER_TAG=latest
 pipelines:
   branches:
     staging:
@@ -31,6 +42,10 @@ pipelines:
           <<: *push
           name: Test beta build and push image
           deployment: Staging
+      - step:
+          <<: *deploy
+          name: Test beta deploy
+          deployment: Staging-deploy
   tags:
     '*-beta*':
       - step:
