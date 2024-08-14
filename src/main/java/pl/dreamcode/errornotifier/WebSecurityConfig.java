@@ -6,6 +6,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,11 +22,11 @@ public class WebSecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.csrf(csrf -> csrf
-				.ignoringRequestMatchers("/errors.json"))
+				.ignoringRequestMatchers("/errors.json", "/api/**"))
+			// .csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests((requests) -> requests
-				.requestMatchers(HttpMethod.POST, "/errors.json").permitAll()
-				.requestMatchers("/login").permitAll()
-				.anyRequest().authenticated()
+				.requestMatchers("/", "/errors/**").authenticated()
+				.anyRequest().permitAll()
 			)
 			.formLogin((form) -> form
 				.loginPage("/login")

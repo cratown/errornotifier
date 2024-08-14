@@ -40,7 +40,7 @@ public class ErrorsControllerTests {
 				.willReturn(error);
 
         mockMvc
-            .perform(post("/errors.json")
+            .perform(post("/api/errors.json")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(error))
                 .accept(MediaType.APPLICATION_JSON))
@@ -53,7 +53,7 @@ public class ErrorsControllerTests {
     @Test
     void shouldReturnBadRequestWithWrongBody() throws Exception {
         mockMvc
-            .perform(post("/errors.json")
+            .perform(post("/api/errors.json")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}")
                 .accept(MediaType.APPLICATION_JSON))
@@ -61,6 +61,31 @@ public class ErrorsControllerTests {
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("projectName").value("must not be blank"))
             .andExpect(jsonPath("body").value("must not be null"));
+    }
+
+    @Test
+    void shouldAllowAccessForAnonymousUserForOldVersion() throws Exception {
+        given(errorService.create(any(Error.class))).willReturn(new Error());
+        mockMvc
+            .perform(post("/errors.json")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("project", "Project name")
+                .param("text", "Project body")
+            )
+            .andDo(print())
+            .andExpect(status().isCreated());
+        verify(errorService).create(any(Error.class));
+    }
+
+    @Test
+    void shouldReturnBadRequestWithWrongBodyForOldVersion() throws Exception {
+        mockMvc
+            .perform(post("/errors.json")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("project").value("must not be blank"))
+            .andExpect(jsonPath("text").value("must not be null"));
     }
 
     protected static String asJsonString(final Object obj) {

@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 run-info.txt
+docker-compose.yml
 ### STS ###
 .apt_generated
 .classpath
@@ -18,7 +19,7 @@ run-info.txt
 *.iws
 *.iml
 *.ipr
-
+.env
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
