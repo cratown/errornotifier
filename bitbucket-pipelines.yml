@@ -17,7 +17,7 @@ definitions:
           - maven
         script:
           - ls -ltra ./target
-          - docker build -f Dockerfile -t $DOCKER_IMAGE_NAME:latest .
+          - docker build --platform linux/arm64 -f Dockerfile -t $DOCKER_IMAGE_NAME:latest .
           - docker tag $DOCKER_IMAGE_NAME:latest $DOCKER_REGISTRY_HOST/$DOCKER_IMAGE_NAME:latest
           - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY_HOST
           - docker push $DOCKER_REGISTRY_HOST/$DOCKER_IMAGE_NAME:latest
