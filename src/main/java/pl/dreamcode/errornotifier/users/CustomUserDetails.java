@@ -1,4 +1,4 @@
-package pl.dreamcode.errornotifier.admins;
+package pl.dreamcode.errornotifier.users;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -7,11 +7,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class AdminDetails implements UserDetails {
+public class CustomUserDetails implements UserDetails {
 
-    private Admin user;
+    private User user;
 
-    public AdminDetails(Admin user) {
+    public CustomUserDetails(User user) {
         this.user = user;
     }
 
@@ -23,7 +23,7 @@ public class AdminDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getEncryptedPassword();
+        return user.getPassword();
     }
 
     @Override
@@ -49,5 +49,9 @@ public class AdminDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Long getId() {
+        return user.getId();
     }
 }

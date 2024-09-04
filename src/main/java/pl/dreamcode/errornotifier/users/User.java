@@ -1,4 +1,4 @@
-package pl.dreamcode.errornotifier.admins;
+package pl.dreamcode.errornotifier.users;
 
 import java.time.Instant;
 
@@ -9,18 +9,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "admins")
-public class Admin {
+@Table(name = "users")
+public class User {
     @Id
-    @SequenceGenerator(name = "admins_seq", sequenceName = "admins_id_seq", allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "admins_seq")
+    // @SequenceGenerator(name = "admins_seq", sequenceName = "admins_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String email;
-    private String encryptedPassword;
+    private String password;
+    private Boolean enabled;
     @CreationTimestamp
     private Instant createdAt;
     @UpdateTimestamp
@@ -38,11 +38,11 @@ public class Admin {
     public void setEmail(String email) {
         this.email = email;
     }
-    public String getEncryptedPassword() {
-        return encryptedPassword;
+    public String getPassword() {
+        return password;
     }
-    public void setEncryptedPassword(String encryptedPassword) {
-        this.encryptedPassword = encryptedPassword;
+    public void setPassword(String password) {
+        this.password = password;
     }
     public Instant getCreatedAt() {
         return createdAt;
@@ -56,4 +56,12 @@ public class Admin {
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
     }
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    
 }

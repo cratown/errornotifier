@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/unauthorized}">
+<head>
+    <title>Registration page</title>
+
+    <style>
+        .form-signup {
+            max-width: 330px;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content" class="d-flex" style="min-height: 100vh;">
+        <main class="form-signup w-100 m-auto">
+            <h1>Registration page</h1>
+            <p th:if="${registrationError}" class="alert alert-danger" th:text="${registrationError}">Registration error</p>
+            <p th:if="${success}" class="alert alert-success" th:text="${success}">Success</p>
+            <form th:action="@{/registration}" method="post" th:object="${user}" enctype="utf8">
+                <label for="username">Email</label>:
+                <input type="text" th:class="'form-control ' + ${#fields.hasErrors('email') ? 'is-invalid' : ''}" th:field="*{email}" id="email" name="email" autofocus="autofocus" />
+                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="invalid-feedback"></div>
+                <br />
+                <label for="password">Password</label>:
+                <input type="password" th:class="'form-control ' + ${#fields.hasErrors('password') ? 'is-invalid' : ''}" id="password" name="password" />
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="invalid-feedback"></div>
+                <br />
+                <label for="matchingPassword">Password confirmation</label>:
+                <input type="password" th:class="'form-control ' + ${#fields.hasErrors('matchingPassword') ? 'is-invalid' : ''}" id="matchingPassword" name="matchingPassword" />
+                <div th:if="${#fields.hasErrors('matchingPassword')}" th:errors="*{matchingPassword}" class="invalid-feedback"></div>
+                <br />
+                <input type="submit" class="btn w-100 btn-primary py-2" value="Sign up" />
+            </form>
+            <a th:href="@{/login}">Login page</a>
+        </main>
+    </body>
+</html>

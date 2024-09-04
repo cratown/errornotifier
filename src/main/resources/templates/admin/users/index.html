@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/admin_layout}">
+<head>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h3 class="text-center">
+            Users
+        </h3>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Email</th>
+                    <th>Created at</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user:${users.content}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${#temporals.format(user.createdAt, 'yyyy-mm-dd HH:mm:ss')}"></td>
+                    <td class="text-end">
+                        <a th:href="'/admin/users/' + ${user.id}" class="me-2">
+                            <i class="fa-solid fa-pencil"></i>
+                        </a>
+                        <a th:if="${#authentication.getPrincipal().getUsername() != user.email}" th:href="'/admin/users/' + ${user.id} + '/delete'">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <nav th:if="${users.totalPages > 0}">
+            <ul class="pagination">
+                <li class="page-item" th:each="pageNumber : ${pageNumbers}">
+                    <a
+                        th:href="@{/admin/users(page=${pageNumber})}" 
+                        th:text=${pageNumber}
+                        th:class="'page-link ' + ${pageNumber==users.number + 1 ? 'active' : ''}"
+                    >1</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</body>
+</html>

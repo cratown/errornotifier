@@ -1,23 +1,23 @@
-package pl.dreamcode.errornotifier.admins;
+package pl.dreamcode.errornotifier.users;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-public class AdminDetailsService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private AdminRepository adminRepository;
+    private UserRepository adminRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Admin user = adminRepository.findAdminByEmail(username);
+        User user = adminRepository.findByEmail(username);
 
         if (user == null) {
             throw new UsernameNotFoundException("Could not find user");
         }
 
-        return new AdminDetails(user);
+        return new CustomUserDetails(user);
     }
 }

@@ -26,17 +26,13 @@ public class OldErrorForm  implements ErrorForm {
     public void setText(String text) {
         this.text = text;
     }
+    
     @Override
     public Error toError() {
         Error error = new Error();
         error.setProjectName(project);
         error.setBody(text);
         return error;
-    }
-
-    public String toString()
-    {
-        return project + " " + text;
     }
 
 }

@@ -33,9 +33,4 @@ public class ApiErrorForm implements ErrorForm {
         error.setBody(body);
         return error;
     }
-
-    public String toString()
-    {
-        return projectName + " " + body;
-    }
 }

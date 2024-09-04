@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -12,6 +14,7 @@ import pl.dreamcode.errornotifier.errors.ErrorRepository;
 import pl.dreamcode.errornotifier.TestWebSecurityConfig;
 import pl.dreamcode.errornotifier.errors.Error;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -45,8 +48,8 @@ public class ErrorsControllerTests {
     void shouldAllowAccessForAuthenticatedUser() throws Exception {
         Error error = new Error();
         error.setProjectName("error_notifier");
-        given(errorRepository.findAll())
-				.willReturn(Arrays.asList(error));
+        given(errorRepository.findAll(any(Pageable.class)))
+				.willReturn(new PageImpl<Error>(Arrays.asList(error)));
 
         mockMvc
             .perform(get("/"))
