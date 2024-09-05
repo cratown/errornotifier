@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/unauthorized}">
+<head>
+    <title>Registration page</title>
+
+    <style>
+        .form-signup {
+            max-width: 330px;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content" class="d-flex" style="min-height: 100vh;">
+        <main class="form-signup w-100 m-auto">
+            <h1>Confirmation</h1>
+            <p th:if="${error}" class="alert alert-danger" th:text="${error}">Registration error</p>
+            <div th:if="${success}">
+                <p class="alert alert-success" th:text="${success}">Success</p>
+                <p class="text-center">
+                    <a th:href="@{/login}">Login page</a>
+                </p>
+            </div>
+        </main>
+    </body>
+</html>

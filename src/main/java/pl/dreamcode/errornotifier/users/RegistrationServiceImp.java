@@ -1,11 +1,13 @@
 package pl.dreamcode.errornotifier.users;
 
-import java.util.Arrays;
+import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import pl.dreamcode.errornotifier.users.exception.InvalidTokenException;
+import pl.dreamcode.errornotifier.users.exception.TokenExpiredException;
 import pl.dreamcode.errornotifier.users.exception.UserAlreadyExistException;
 
 @Service
@@ -15,6 +17,9 @@ public class RegistrationServiceImp implements RegistrationService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private VerificationTokenRepository tokenRepository;
     
     @Override
     public User registerNewUserAccount(RegistrationForm registrationForm) throws UserAlreadyExistException {
@@ -26,7 +31,7 @@ public class RegistrationServiceImp implements RegistrationService {
         User user = new User();
         user.setPassword(passwordEncoder.encode(registrationForm.getPassword()));
         user.setEmail(registrationForm.getEmail());
-        user.setEnabled(true);
+        user.setEnabled(false); // User needs to activate account.
         // user.setRoles(Arrays.asList("ROLE_USER"));
 
         return repository.save(user);
@@ -34,5 +39,29 @@ public class RegistrationServiceImp implements RegistrationService {
 
     private boolean emailExists(String email) {
         return repository.findByEmail(email) != null;
+    }
+    
+    @Override
+    public void createVerificationToken(User user, String token) {
+        VerificationToken myToken = new VerificationToken(token, user);
+        tokenRepository.save(myToken);
+    }
+
+    @Override
+    // User confirmation.
+    public User confirm(String token) throws InvalidTokenException, TokenExpiredException {
+        VerificationToken verificationToken = tokenRepository.findByToken(token);
+        if (verificationToken == null) {
+            throw new InvalidTokenException();
+        }
+        int diff = verificationToken.getExpiryDateTime().compareTo(Instant.now());
+        if(diff == -1) {
+            throw new TokenExpiredException();
+        }
+        User user = verificationToken.getUser();
+        user.setEnabled(true);
+        repository.save(user);
+        tokenRepository.delete(verificationToken); // Clean up verification token
+        return user;
     }
 }

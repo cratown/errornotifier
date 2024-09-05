@@ -16,6 +16,8 @@ xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/unauthorized}">
         <main class="form-signin w-100 m-auto">
             <h1>Login page</h1>
             <p th:if="${param.error}" class="alert alert-danger">Wrong user or password</p>
+            <p th:if="${success}" class="alert alert-success" th:text="${success}">Success</p>
+            <p th:if="${errorMessage}" class="alert alert-dange" th:text="${errorMessage}">Error message</p>
             <form th:action="@{/login}" method="post">
                 <label for="username">Username</label>:
                 <input type="text"  class="form-control"  id="username" name="username" autofocus="autofocus" /> <br />

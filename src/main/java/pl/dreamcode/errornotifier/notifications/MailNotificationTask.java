@@ -11,7 +11,7 @@ import pl.dreamcode.errornotifier.errors.ErrorRepository;
 import pl.dreamcode.errornotifier.errors.Error;
 
 @Component
-public class MailNotificationTask implements NotificationTask{
+public class MailNotificationTask implements NotificationTask {
 
     @Autowired
     private ErrorRepository errorRepository;
