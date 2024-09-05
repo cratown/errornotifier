@@ -27,7 +27,6 @@ import pl.dreamcode.errornotifier.users.OnRegistrationCompleteEvent;
 import pl.dreamcode.errornotifier.users.RegistrationForm;
 import pl.dreamcode.errornotifier.users.RegistrationService;
 import pl.dreamcode.errornotifier.users.User;
-import pl.dreamcode.errornotifier.users.VerificationToken;
 import pl.dreamcode.errornotifier.users.exception.InvalidTokenException;
 import pl.dreamcode.errornotifier.users.exception.TokenExpiredException;
 import pl.dreamcode.errornotifier.users.exception.UserAlreadyExistException;

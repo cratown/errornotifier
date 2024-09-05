@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import pl.dreamcode.errornotifier.errors.ErrorRepository;
+import pl.dreamcode.errornotifier.errors.OnNewErrorEvent;
 import pl.dreamcode.errornotifier.errors.Error;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,14 +33,16 @@ public class MailNotificationTaskTests {
     void shouldSendMailAboutLastErrorInProject() throws Exception {
 
         String projectName = "Project name";
-
+        Error projectError = new Error();
+        projectError.setProjectName(projectName);
+        OnNewErrorEvent event = new OnNewErrorEvent(projectError);
         doNothing().when(emailService).sendEmail(any(String.class), any(String.class), any(String.class));
         given(errorRepository.shouldSendNotification(any(String.class), any(Instant.class))).willReturn(true);
 
         Error lastError = new Error();
         given(errorRepository.findFirstByProjectNameOrderByIdDesc(any(String.class))).willReturn(lastError);
 
-        service.runNotification(projectName);
+        service.runNotification(event);
 
         verify(emailService).sendEmail(any(String.class), any(String.class), any(String.class));
     }
@@ -48,10 +51,12 @@ public class MailNotificationTaskTests {
     void shouldNotSendMailAboutLastErrorInProjectWhenAlreadySend() throws Exception {
 
         String projectName = "Project name";
-
+        Error projectError = new Error();
+        projectError.setProjectName(projectName);
+        OnNewErrorEvent event = new OnNewErrorEvent(projectError);
         given(errorRepository.shouldSendNotification(any(String.class), any(Instant.class))).willReturn(false);
 
-        service.runNotification(projectName);
+        service.runNotification(event);
 
         verify(emailService, never()).sendEmail(any(String.class), any(String.class), any(String.class));
     }
@@ -60,10 +65,12 @@ public class MailNotificationTaskTests {
     void shouldNotSendMailAboutLastErrorInProjectWhenNoLastError() throws Exception {
 
         String projectName = "Project name";
-
+        Error projectError = new Error();
+        projectError.setProjectName(projectName);
+        OnNewErrorEvent event = new OnNewErrorEvent(projectError);
         given(errorRepository.shouldSendNotification(any(String.class), any(Instant.class))).willReturn(true);
         given(errorRepository.findFirstByProjectNameOrderByIdDesc(any(String.class))).willReturn(null);
-        service.runNotification(projectName);
+        service.runNotification(event);
 
         verify(emailService, never()).sendEmail(any(String.class), any(String.class), any(String.class));
     }

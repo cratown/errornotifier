@@ -3,6 +3,7 @@ package pl.dreamcode.errornotifier.errors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+
 import static org.mockito.BDDMockito.given;
 
 import org.junit.jupiter.api.Test;
@@ -10,8 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import pl.dreamcode.errornotifier.notifications.NotificationTask;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 public class ErrorDBServiceTests {
@@ -23,7 +23,7 @@ public class ErrorDBServiceTests {
     private ErrorRepository errorRepository;
 
     @Mock
-    private NotificationTask notificationTask;
+    private ApplicationEventPublisher eventPublisher;
 
     @Test
     void shouldCreate() throws Exception {
@@ -38,5 +38,7 @@ public class ErrorDBServiceTests {
         assertEquals(savedError, error);
         // Check if repository save called
         verify(errorRepository).save(any(Error.class));
+        // Check if event added
+        verify(eventPublisher).publishEvent(any(OnNewErrorEvent.class));
     }
 }

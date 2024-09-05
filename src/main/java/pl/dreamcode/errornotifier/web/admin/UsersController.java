@@ -1,6 +1,5 @@
 package pl.dreamcode.errornotifier.web.admin;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,7 +28,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import pl.dreamcode.errornotifier.users.AdminUserService;
 import pl.dreamcode.errornotifier.users.EditForm;
-import pl.dreamcode.errornotifier.users.RegistrationService;
 import pl.dreamcode.errornotifier.users.User;
 import pl.dreamcode.errornotifier.users.UserRepository;
 import pl.dreamcode.errornotifier.users.exception.UserAlreadyExistException;

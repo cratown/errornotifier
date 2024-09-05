@@ -4,10 +4,12 @@ import java.time.Duration;
 import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import pl.dreamcode.errornotifier.errors.ErrorRepository;
+import pl.dreamcode.errornotifier.errors.OnNewErrorEvent;
 import pl.dreamcode.errornotifier.errors.Error;
 
 @Component
@@ -20,8 +22,10 @@ public class MailNotificationTask implements NotificationTask {
     private EmailService emailService;
 
     @Async
+    @EventListener
     @Override
-    public void runNotification(String projectName) {
+    public void runNotification(OnNewErrorEvent event) {
+        String projectName = event.getProjectError().getProjectName();
         Boolean shouldSend = errorRepository.shouldSendNotification(projectName, Instant.now().minus(Duration.ofMinutes(10)));
         System.out.println("Async task: " + Thread.currentThread().getName() + "Should send: " + (shouldSend ? "TRUE" : "FALSE"));
         // Return if shouldn't send mail

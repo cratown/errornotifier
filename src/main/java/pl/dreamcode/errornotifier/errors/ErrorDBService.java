@@ -1,9 +1,8 @@
 package pl.dreamcode.errornotifier.errors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-
-import pl.dreamcode.errornotifier.notifications.NotificationTask;
 
 @Service
 public class ErrorDBService implements ErrorService {
@@ -12,12 +11,12 @@ public class ErrorDBService implements ErrorService {
     private ErrorRepository errorRepository;
 
     @Autowired
-    private NotificationTask notificationTask;
+    ApplicationEventPublisher eventPublisher;
 
     @Override
     public Error create(Error newError) {
         Error error = errorRepository.save(newError);
-        notificationTask.runNotification(error.getProjectName());
+        eventPublisher.publishEvent(new OnNewErrorEvent(error));
         return error;
     }
 
