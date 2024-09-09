@@ -75,7 +75,7 @@ public class UsersController {
     public String registerUserAccount(@ModelAttribute("user") @Valid EditForm form, HttpServletRequest request, Errors errors, Model model) {
         model.addAttribute("user", form);
         try {
-            User registered = userService.updateUser(form);
+            userService.updateUser(form);
             model.addAttribute("success", true);
         } catch (UserAlreadyExistException uaeEx) {
             model.addAttribute("registrationError", uaeEx.getMessage());

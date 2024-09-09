@@ -13,9 +13,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import jakarta.validation.Valid;
+import pl.dreamcode.errornotifier.users.OnPasswordResetRequestEvent;
 import pl.dreamcode.errornotifier.users.OnRegistrationCompleteEvent;
+import pl.dreamcode.errornotifier.users.PasswordChangeForm;
+import pl.dreamcode.errornotifier.users.PasswordResetService;
 import pl.dreamcode.errornotifier.users.RegistrationForm;
 import pl.dreamcode.errornotifier.users.RegistrationService;
+import pl.dreamcode.errornotifier.users.ResetPasswordForm;
 import pl.dreamcode.errornotifier.users.User;
 import pl.dreamcode.errornotifier.users.exception.InvalidTokenException;
 import pl.dreamcode.errornotifier.users.exception.TokenExpiredException;
@@ -26,6 +30,9 @@ public class AuthController {
 
     @Autowired
     private RegistrationService registrationService;
+
+    @Autowired
+    private PasswordResetService passwordResetService;
 
     @Autowired
     ApplicationEventPublisher eventPublisher;
@@ -72,5 +79,44 @@ public class AuthController {
             model.addAttribute("error", e.getMessage());
         }
         return "auth/registration_confirm"; 
+    }
+
+    // Password reset form
+    @GetMapping("/passwordReset")
+    public String passwordReset(Model model) {
+        model.addAttribute("formData", new ResetPasswordForm());
+        return "auth/password_reset"; 
+    }
+
+    // Password reset form processing
+    @PostMapping("/passwordReset")
+    public String sendPasswordReset(@ModelAttribute("formData") @Valid ResetPasswordForm resetPasswordForm, BindingResult result, Model model) {
+        if(result.hasErrors()) {
+            return "auth/password_reset";
+        }
+        eventPublisher.publishEvent(new OnPasswordResetRequestEvent(resetPasswordForm.getEmail()));
+        model.addAttribute("success", true);
+        return "auth/password_reset"; 
+    }
+
+    // Process password reset link and display change password page
+    @GetMapping("/changePassword")
+    public String changePasswordForm(@RequestParam("token") String token, Model model) {
+        User user = passwordResetService.findUserByToken(token);
+        if(user == null) {
+            model.addAttribute("tokenError", "Invalid token");
+        }
+        model.addAttribute("formData", new PasswordChangeForm());
+        return "auth/change_password"; 
+    }
+
+    // Process password reset link and display change password page
+    @PostMapping("/changePassword")
+    public String changePassword(@RequestParam("token") String token, @ModelAttribute("formData") @Valid PasswordChangeForm resetPasswordForm, BindingResult result, Model model) {
+        if(result.hasErrors()) {
+            return "auth/change_password";
+        }
+        passwordResetService.updateUserPassword(token, resetPasswordForm);
+        return "redirect:/login"; 
     }
 }

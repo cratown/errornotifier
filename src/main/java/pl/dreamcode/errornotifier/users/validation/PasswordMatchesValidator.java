@@ -2,7 +2,7 @@ package pl.dreamcode.errornotifier.users.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import pl.dreamcode.errornotifier.users.RegistrationForm;
+import pl.dreamcode.errornotifier.users.PasswordMatchesForm;
 
 public class PasswordMatchesValidator implements ConstraintValidator<PasswordMatches, Object> {
     @Override
@@ -10,7 +10,7 @@ public class PasswordMatchesValidator implements ConstraintValidator<PasswordMat
 
     @Override
     public boolean isValid(Object obj, ConstraintValidatorContext context){
-        RegistrationForm user = (RegistrationForm) obj;
+        PasswordMatchesForm user = (PasswordMatchesForm) obj;
         return user.getPassword().equals(user.getMatchingPassword());
     }
 }

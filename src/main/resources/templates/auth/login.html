@@ -31,7 +31,10 @@ xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/unauthorized}">
                 </div>
                 <input type="submit" class="btn w-100 btn-primary py-2" value="Log in" />
             </form>
-            <a th:href="@{/registration}">Register</a>
+            <div class="d-flex justify-content-around">
+                <a th:href="@{/registration}">Register</a>
+                <a th:href="@{/passwordReset}">Forgot your password?</a>
+            </div>
         </main>
     </body>
 </html>

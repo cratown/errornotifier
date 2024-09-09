@@ -1,7 +1,5 @@
 package pl.dreamcode.errornotifier.users;
 
-import java.time.Instant;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,7 +9,7 @@ import pl.dreamcode.errornotifier.users.exception.TokenExpiredException;
 import pl.dreamcode.errornotifier.users.exception.UserAlreadyExistException;
 
 @Service
-public class RegistrationServiceImp implements RegistrationService {
+public class RegistrationServiceImp extends VerificationTokenServiceImp implements RegistrationService {
     @Autowired
     private UserRepository repository;
 
@@ -50,14 +48,7 @@ public class RegistrationServiceImp implements RegistrationService {
     @Override
     // User confirmation.
     public User confirm(String token) throws InvalidTokenException, TokenExpiredException {
-        VerificationToken verificationToken = tokenRepository.findByToken(token);
-        if (verificationToken == null) {
-            throw new InvalidTokenException();
-        }
-        int diff = verificationToken.getExpiryDateTime().compareTo(Instant.now());
-        if(diff == -1) {
-            throw new TokenExpiredException();
-        }
+        VerificationToken verificationToken = getVerificationToken(token);
         User user = verificationToken.getUser();
         user.setEnabled(true);
         repository.save(user);

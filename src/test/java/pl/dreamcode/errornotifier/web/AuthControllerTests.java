@@ -1,11 +1,13 @@
 package pl.dreamcode.errornotifier.web;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.UUID;
@@ -23,7 +25,10 @@ import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.web.servlet.MockMvc;
 
 import pl.dreamcode.errornotifier.TestWebSecurityConfig;
+import pl.dreamcode.errornotifier.users.OnPasswordResetRequestEvent;
 import pl.dreamcode.errornotifier.users.OnRegistrationCompleteEvent;
+import pl.dreamcode.errornotifier.users.PasswordChangeForm;
+import pl.dreamcode.errornotifier.users.PasswordResetService;
 import pl.dreamcode.errornotifier.users.RegistrationForm;
 import pl.dreamcode.errornotifier.users.RegistrationService;
 import pl.dreamcode.errornotifier.users.User;
@@ -44,6 +49,9 @@ public class AuthControllerTests {
 
     @MockBean
     private RegistrationService registrationService;
+
+    @MockBean
+    private PasswordResetService passwordResetService;
 
     @Autowired
 	ApplicationEvents events;
@@ -165,5 +173,98 @@ public class AuthControllerTests {
             .andExpect(content().string(containsString("Account activated")));
 
         verify(registrationService).confirm(token);
+    }
+
+    @Test
+    void shouldDisplayPasswordResetForm() throws Exception {
+        mockMvc
+            .perform(get("/passwordReset"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Forgot your password?")));
+    }
+
+    @Test
+    void shouldProcessPasswordResetFormAndDisplaySuccessMessage() throws Exception {
+        mockMvc
+            .perform(post("/passwordReset")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("email", "test@example.com")
+                .with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Check your inbox for the next steps")));
+        
+        long numEvents = events.stream(OnPasswordResetRequestEvent.class).count(); 
+        assertEquals(1, numEvents);
+    }
+
+    @Test
+    void shouldDisplayValidationErrorsOnPasswordReset() throws Exception {
+        String token = UUID.randomUUID().toString();
+
+        mockMvc
+            .perform(post("/passwordReset?token={token}", token)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("email", "")
+                .with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("must not be blank")));
+    }
+
+    @Test
+    void shouldDisplayPasswordChangeForm() throws Exception {
+        String token = UUID.randomUUID().toString();
+
+        given(passwordResetService.findUserByToken(token)).willReturn(new User());
+        
+        mockMvc
+            .perform(get("/changePassword?token={token}", token))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Password confirmation")));
+    }
+
+    @Test
+    void shouldDisplayPasswordChangeFormWithMessageWhenInvalidToken() throws Exception {
+        String token = UUID.randomUUID().toString();
+
+        given(passwordResetService.findUserByToken(token)).willReturn(null);
+        
+        mockMvc
+            .perform(get("/changePassword?token={token}", token))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Invalid token")));
+    }
+
+    @Test
+    void shouldChangePasswordAndRedirectToLoginPageOnValidationSuccess() throws Exception {
+        String token = UUID.randomUUID().toString();
+        String password = "superSecretPassword";
+        PasswordChangeForm resetPasswordForm = new PasswordChangeForm();
+
+        given(passwordResetService.updateUserPassword(token, resetPasswordForm)).willReturn(new User());
+        
+        mockMvc
+            .perform(post("/changePassword?token={token}", token)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("password", password)
+                .param("matchingPassword", password)
+                .with(csrf()))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(header().string("Location", containsString("/login")));
+
+        verify(passwordResetService).updateUserPassword(eq(token), any(PasswordChangeForm.class));
+    }
+
+    @Test
+    void shouldDisplayValidationErrorsOnChangePassword() throws Exception {
+        String token = UUID.randomUUID().toString();
+
+        mockMvc
+            .perform(post("/changePassword?token={token}", token)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("password", "")
+                .param("matchingPassword", "")
+                .with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("must not be blank")));
     }
 }
